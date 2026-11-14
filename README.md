@@ -39,4 +39,5 @@ To develop a user-friendly inventory and order management solution that streamli
 - Payment gateway integration
 - Advanced inventory alerts
 - Business intelligence dashboards
-- project view:"C:\Users\pradh\OneDrive\Pictures\Screenshots\Screenshot 2026-11-14 222438.png"
+- project view:<img width="1826" height="778" alt="Screenshot 2026-11-14 222438" src="https://github.com/user-attachments/assets/7d5e741a-2332-4f0c-9c02-116dc3a940a9" />
+
