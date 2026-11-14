@@ -1,0 +1,102 @@
+
+{% extends "base.html" %}
+
+{% block title %}Products | ShopStock{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">CATALOG MANAGEMENT</span>
+        <h1>Products & Inventory</h1>
+        <p>Manage your catalog, pricing, and stock availability.</p>
+    </div>
+
+    <a href="{{ url_for('add_product') }}" class="button">
+        + Add New Product
+    </a>
+</div>
+
+<div class="summary-strip">
+    <div><span>Total products</span><strong>{{ products|length }}</strong></div>
+    <div><span>Low-stock items</span><strong>{{ products|selectattr('stock', 'le', 5)|list|length }}</strong></div>
+    <div><span>Out of stock</span><strong>{{ products|selectattr('stock', 'equalto', 0)|list|length }}</strong></div>
+</div>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h3>Product Catalog</h3>
+            <p>All products currently registered in the system</p>
+        </div>
+        <span class="count-badge">{{ products|length }} items</span>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>PRODUCT</th>
+                    <th>CATEGORY</th>
+                    <th>UNIT PRICE</th>
+                    <th>STOCK LEVEL</th>
+                    <th>INVENTORY VALUE</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        <div class="table-product">
+                            <div class="product-avatar">
+                                {{ product.name[:1]|upper }}
+                            </div>
+                            <div>
+                                <strong>{{ product.name }}</strong>
+                                <small>SKU-{{ "%04d"|format(product.id) }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="category-badge">{{ product.category }}</span></td>
+                    <td class="amount">₹{{ "%.2f"|format(product.price) }}</td>
+                    <td>
+                        {% if product.stock == 0 %}
+                            <span class="stock-badge stock-empty">Out of stock</span>
+                        {% elif product.stock <= 5 %}
+                            <span class="stock-badge">{{ product.stock }} units</span>
+                        {% else %}
+                            <span class="stock-good">{{ product.stock }} units</span>
+                        {% endif %}
+                    </td>
+                    <td class="amount">
+                        ₹{{ "%.2f"|format(product.price * product.stock) }}
+                    </td>
+                    <td>
+                        <form method="POST"
+                              action="{{ url_for('delete_product', product_id=product.id) }}"
+                              onsubmit="return confirm('Delete {{ product.name }}?')">
+                            <button type="submit" class="button button-danger button-small">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <div class="empty-icon">▣</div>
+                            <strong>Your catalog is empty</strong>
+                            <p>Add your first product to start managing inventory.</p>
+                            <a href="{{ url_for('add_product') }}" class="button">
+                                Add Your First Product
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

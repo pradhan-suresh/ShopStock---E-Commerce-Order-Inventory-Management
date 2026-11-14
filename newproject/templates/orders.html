@@ -1,0 +1,117 @@
+
+{% extends "base.html" %}
+
+{% block title %}Orders | ShopStock{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">SALES MANAGEMENT</span>
+        <h1>Order Management</h1>
+        <p>Review purchases, track fulfillment, and manage cancellations.</p>
+    </div>
+    <a href="{{ url_for('create_order') }}" class="button">
+        + Create Order
+    </a>
+</div>
+
+<div class="summary-strip">
+    <div>
+        <span>All orders</span>
+        <strong>{{ orders|length }}</strong>
+    </div>
+    <div>
+        <span>Active orders</span>
+        <strong>{{ orders|rejectattr('status', 'equalto', 'Cancelled')|rejectattr('status', 'equalto', 'Delivered')|list|length }}</strong>
+    </div>
+    <div>
+        <span>Delivered</span>
+        <strong>{{ orders|selectattr('status', 'equalto', 'Delivered')|list|length }}</strong>
+    </div>
+</div>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h3>All Orders</h3>
+            <p>Order history and fulfillment status</p>
+        </div>
+        <span class="count-badge">{{ orders|length }} orders</span>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ORDER</th>
+                    <th>CUSTOMER</th>
+                    <th>PRODUCT</th>
+                    <th>QTY</th>
+                    <th>TOTAL</th>
+                    <th>DATE</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><strong>#{{ order.id }}</strong></td>
+                    <td>{{ order.customer_name }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td class="amount">₹{{ "%.2f"|format(order.total_amount) }}</td>
+                    <td>{{ order.created_at.strftime("%d %b %Y") }}</td>
+                    <td>
+                        <span class="status status-{{ order.status|lower }}">
+                            {{ order.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if order.status not in ["Cancelled", "Delivered"] %}
+                        <form method="POST"
+                              action="{{ url_for('update_order_status', order_id=order.id) }}"
+                              class="action-form">
+                            <select name="status" aria-label="Order status">
+                                {% for s in ["Processing", "Shipped", "Delivered"] %}
+                                <option value="{{ s }}"
+                                    {% if order.status == s %}selected{% endif %}>
+                                    {{ s }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button class="button button-small" type="submit">
+                                Update
+                            </button>
+                        </form>
+
+                        <form method="POST"
+                              action="{{ url_for('cancel_order', order_id=order.id) }}"
+                              onsubmit="return confirm('Cancel this order and restore stock?')">
+                            <button class="button button-danger button-small"
+                                    type="submit">Cancel</button>
+                        </form>
+                        {% else %}
+                        <span class="muted">No actions</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <div class="empty-icon">▤</div>
+                            <strong>No orders found</strong>
+                            <p>Create an order to see it listed here.</p>
+                            <a href="{{ url_for('create_order') }}" class="button">
+                                Create First Order
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

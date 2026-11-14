@@ -1,0 +1,87 @@
+
+{% extends "base.html" %}
+
+{% block title %}Create Order | ShopStock{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">SALES MANAGEMENT</span>
+        <h1>Create New Order</h1>
+        <p>Enter customer details and select an available product.</p>
+    </div>
+    <a href="{{ url_for('orders') }}" class="button button-outline">
+        ← Back to Orders
+    </a>
+</div>
+
+<div class="form-layout">
+    <section class="panel form-panel">
+        <div class="panel-header">
+            <div>
+                <h3>Order Details</h3>
+                <p>Available inventory is checked before placing the order.</p>
+            </div>
+            <span class="form-icon">↗</span>
+        </div>
+
+        <form method="POST" class="product-form">
+            <label for="customer_name">Customer Name *</label>
+            <input id="customer_name" name="customer_name"
+                   type="text" maxlength="100"
+                   placeholder="Enter customer name" required>
+
+            <label for="product_id">Select Product *</label>
+            <select id="product_id" name="product_id" required>
+                <option value="">Choose a product</option>
+                {% for product in products %}
+                <option value="{{ product.id }}">
+                    {{ product.name }} — ₹{{ "%.2f"|format(product.price) }}
+                    ({{ product.stock }} available)
+                </option>
+                {% endfor %}
+            </select>
+
+            <label for="quantity">Quantity *</label>
+            <input id="quantity" name="quantity" type="number"
+                   min="1" step="1" placeholder="1" required>
+
+            {% if not products %}
+            <div class="alert error">
+                No products are in stock. Add a product or replenish inventory first.
+            </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <a href="{{ url_for('orders') }}"
+                   class="button button-outline">Cancel</a>
+                <button class="button" type="submit"
+                        {% if not products %}disabled{% endif %}>
+                    Place Order →
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <aside class="panel tip-panel">
+        <div class="tip-icon">✓</div>
+        <h3>Order Process</h3>
+        <div class="process-step">
+            <span>1</span>
+            <div><strong>Select a product</strong><p>Choose an item that is in stock.</p></div>
+        </div>
+        <div class="process-step">
+            <span>2</span>
+            <div><strong>Enter quantity</strong><p>The requested quantity must be available.</p></div>
+        </div>
+        <div class="process-step">
+            <span>3</span>
+            <div><strong>Confirm the order</strong><p>Stock is reduced automatically.</p></div>
+        </div>
+        <div class="tip-note">
+            <strong>Automatic inventory update</strong>
+            <p>If an eligible order is cancelled, the reserved quantity is restored.</p>
+        </div>
+    </aside>
+</div>
+{% endblock %}

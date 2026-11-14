@@ -1,0 +1,80 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add Product | ShopStock{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">CATALOG MANAGEMENT</span>
+        <h1>Add New Product</h1>
+        <p>Enter the product information and initial stock.</p>
+    </div>
+    <a href="{{ url_for('products') }}" class="button button-outline">
+        ← Back to Products
+    </a>
+</div>
+
+<div class="form-layout">
+    <section class="panel form-panel">
+        <div class="panel-header">
+            <div>
+                <h3>Product Information</h3>
+                <p>Fields marked with * are required.</p>
+            </div>
+            <span class="form-icon">＋</span>
+        </div>
+
+        <form method="POST" class="product-form">
+            <label for="name">Product Name *</label>
+            <input id="name" name="name" type="text"
+                   maxlength="100" placeholder="e.g. Wireless Mouse"
+                   required>
+
+            <label for="category">Category *</label>
+            <input id="category" name="category" type="text"
+                   maxlength="80" placeholder="e.g. Electronics"
+                   required>
+
+            <div class="form-row">
+                <div>
+                    <label for="price">Unit Price (₹) *</label>
+                    <input id="price" name="price" type="number"
+                           min="0.01" step="0.01"
+                           placeholder="499.00" required>
+                </div>
+                <div>
+                    <label for="stock">Initial Stock *</label>
+                    <input id="stock" name="stock" type="number"
+                           min="0" step="1"
+                           placeholder="25" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('products') }}"
+                   class="button button-outline">Cancel</a>
+                <button type="submit" class="button">
+                    Save Product →
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <aside class="panel tip-panel">
+        <div class="tip-icon">✦</div>
+        <h3>Inventory Tips</h3>
+        <p>Keep your product information accurate to make stock tracking easier.</p>
+        <ul>
+            <li>Use clear product names.</li>
+            <li>Choose a consistent category.</li>
+            <li>Enter the correct selling price.</li>
+            <li>Set the actual quantity available.</li>
+        </ul>
+        <div class="tip-note">
+            <strong>Low-stock alert</strong>
+            <p>Products with 5 or fewer units appear in the dashboard alerts.</p>
+        </div>
+    </aside>
+</div>
+{% endblock %}
